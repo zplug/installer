@@ -11,6 +11,10 @@ if [[ -z $ZSH_VERSION ]]; then
     exit 1
 fi
 
+if [[ -z $ZPLUG_HOME ]]; then
+    export $ZPLUG_HOME=~/.zplug
+fi
+
 spin()
 {
     local \
@@ -61,14 +65,18 @@ spin()
 
 execute()
 {
-    local    arg title
-    local -a args
+    local    arg title error
+    local -a args errors
 
     while (( $# > 0 ))
     do
         case "$1" in
             --title)
                 title="$2"
+                shift
+                ;;
+            --error)
+                errors+=( "$2" )
                 shift
                 ;;
             -*|--*)
@@ -84,13 +92,22 @@ execute()
     {
         for arg in "${args[@]}"
         do
-            ${=arg} &>/dev/null
+            ${~${=arg}} &>/dev/null
+            # When an error causes
             if [[ $status -ne 0 ]]; then
+                # error mssages
                 printf "\033[2K" 2>/dev/null
                 printf \
                     " $fg[yellow]\U26A0$reset_color  $title [$fg[red]FAILED$reset_color]\n" \
                     2>/dev/null
                 printf "$status\n" >"$TMPFILE"
+                # additional error messages
+                if (( $#errors > 0 )); then
+                    for error in "${errors[@]}"
+                    do
+                        printf "    -> $error\n" 2>/dev/null
+                    done
+                fi
             fi
         done
     } &
@@ -106,8 +123,10 @@ execute()
 
 execute \
     --title \
-    "Installing zplug to ${ZPLUG_HOME:-~/.zplug}" \
-    "git clone https://github.com/zplug/zplug.git ${ZPLUG_HOME:-~/.zplug}"
+    "Installing zplug to $ZPLUG_HOME" \
+    --error \
+    "Don't ZPLUG_HOME already exists?" \
+    "git clone https://github.com/zplug/zplug.git $ZPLUG_HOME"
 
 execute \
     --title \
@@ -116,6 +135,7 @@ execute \
     "test ${ZSH_VERSION//./} -gt 419"
 
 if (( $#failed )); then
+    printf "\033[2K" 2>/dev/null
     printf "Oops \U2620 ... Try again!\n" 2>/dev/null
     exit 1
 else
