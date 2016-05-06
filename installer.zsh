@@ -6,7 +6,7 @@ autoload -Uz colors; colors
 typeset -a failed
 typeset    TMPFILE="/tmp/.zplug-$$$RANDOM"
 
-if [[ -z $ZSH_VERSION ]] || ; then
+if [[ -z $ZSH_VERSION ]]; then
     printf "zplug requires zsh 4.1.9 or more\n"
     exit 1
 fi
@@ -15,7 +15,7 @@ spin()
 {
     local \
         before_msg="$1" \
-        after_msg="$2 [$fg[green]SUCCEEDED$reset_color]"
+        after_msg="$2"
     local    spinner
     local -a spinners
     spinners=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)
@@ -97,11 +97,9 @@ execute()
 
     spin \
         "$title" \
-        "$title"
+        "$title [$fg[green]SUCCEEDED$reset_color]"
 
-    if [[ $status -eq 0 ]]; then
-        :
-    else
+    if [[ $status -ne 0 ]]; then
         failed+=( $status )
     fi
 }
@@ -113,12 +111,12 @@ execute \
 
 execute \
     --title \
-    "Checking if your zsh version is less than 4.1.9" \
+    "Checking if your zsh version is more than 4.1.9" \
     "sleep 1" \
     "test ${ZSH_VERSION//./} -gt 419"
 
 if (( $#failed )); then
-    printf "Oops \U2620 . Try again!\n" 2>/dev/null
+    printf "Oops \U2620 ... Try again!\n" 2>/dev/null
     exit 1
 else
     printf " All processes are successfully completed \U1F389\n"
