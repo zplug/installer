@@ -12,7 +12,7 @@ if [[ -z $ZSH_VERSION ]]; then
 fi
 
 if [[ -z $ZPLUG_HOME ]]; then
-    export $ZPLUG_HOME=~/.zplug
+    export ZPLUG_HOME=~/.zplug
 fi
 
 spin()
