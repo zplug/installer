@@ -2,6 +2,7 @@
 
 # Release some autoloads
 autoload -Uz colors; colors
+autoload -Uz is-at-least; is-at-least
 
 typeset -a failed
 typeset    TMPFILE="/tmp/.zplug-$$$RANDOM"
@@ -132,7 +133,7 @@ execute \
     --title \
     "Checking if your zsh version is more than 4.1.9" \
     "sleep 1" \
-    "test ${ZSH_VERSION//./} -gt 419"
+    "is-at-least 4.1.9"
 
 if (( $#failed )); then
     printf "\033[2K" 2>/dev/null
