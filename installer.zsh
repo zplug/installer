@@ -4,7 +4,6 @@
 autoload -Uz colors; colors
 autoload -Uz is-at-least; is-at-least
 
-typeset -a failed
 typeset    TMPFILE="/tmp/.zplug-$$$RANDOM"
 
 if [[ -z $ZSH_VERSION ]]; then
@@ -118,16 +117,11 @@ execute()
         "$title [$fg[green]SUCCEEDED$reset_color]"
 
     if [[ $status -ne 0 ]]; then
-        failed+=( $status )
+	printf "\033[2K" 2>/dev/null
+	printf "Oops \U2620 ... Try again!\n" 2>/dev/null
+	exit 1
     fi
 }
-
-execute \
-    --title \
-    "Installing zplug to $ZPLUG_HOME" \
-    --error \
-    "Don't ZPLUG_HOME already exists?" \
-    "git clone https://github.com/zplug/zplug.git $ZPLUG_HOME"
 
 execute \
     --title \
@@ -135,12 +129,17 @@ execute \
     "sleep 1" \
     "is-at-least 4.1.9"
 
-if (( $#failed )); then
-    printf "\033[2K" 2>/dev/null
-    printf "Oops \U2620 ... Try again!\n" 2>/dev/null
-    exit 1
-else
-    printf " All processes are successfully completed \U1F389\n"
-    printf " For more information, see ${(%):-%U}http://zplug.sh${(%):-%u} \U1F33A\n"
-    printf " Enjoy zplug!\n"
-fi
+execute \
+    --title \
+    "Installing zplug to $ZPLUG_HOME" \
+    --error \
+    "Is git installed?" \
+    --error \
+    "Does '$ZPLUG_HOME' already exist?" \
+    "git clone https://github.com/zplug/zplug.git $ZPLUG_HOME"
+
+
+printf " All processes are successfully completed \U1F389\n"
+printf " For more information, see ${(%):-%U}http://zplug.sh${(%):-%u} \U1F33A\n"
+printf " Enjoy zplug!\n"
+
