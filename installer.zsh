@@ -7,7 +7,7 @@ autoload -Uz is-at-least; is-at-least
 typeset    TMPFILE="/tmp/.zplug-$$$RANDOM"
 
 if [[ -z $ZSH_VERSION ]]; then
-    printf "zplug requires zsh 4.1.9 or more\n"
+    printf "zplug requires zsh 4.1.9 or newer\n"
     exit 1
 fi
 
@@ -125,7 +125,7 @@ execute()
 
 execute \
     --title \
-    "Checking if your zsh version is more than 4.1.9" \
+    "Checking if your zsh version is newer than 4.1.9" \
     "sleep 1" \
     "is-at-least 4.1.9"
 
