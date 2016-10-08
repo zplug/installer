@@ -60,7 +60,7 @@ spin()
     fi 2>/dev/null
 
     # show cursor
-    tput cnorm
+    tput cnorm || true
 }
 
 execute()
