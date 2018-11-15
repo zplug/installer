@@ -40,18 +40,7 @@ spin()
             printf " $fg[white]$spinner$reset_color  $before_msg\r" 2>/dev/null
         done
 
-        echo "$jobstates" \
-            | awk '
-            /[0-9]+=/ {
-                jobs[++job_count] = $0
-            }
-            END {
-                for (i = 1; i <= job_count; i++) {
-                    print(jobs[i])
-                }
-                exit job_count == 0
-            }' \
-                | xargs test -z && break
+        [ $#jobstates = 0 ] && break
     done
 
     if [[ -n $after_msg ]]; then
