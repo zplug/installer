@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+trap 'tput cnorm' EXIT 2
+
 # Release some autoloads
 autoload -Uz colors; colors
 autoload -Uz is-at-least; is-at-least
